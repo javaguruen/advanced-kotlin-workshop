@@ -3,6 +3,10 @@
 .idea/
 target/
 
+# exercises
+src/main/kotlin
+
+
 # Log file
 *.log
 
