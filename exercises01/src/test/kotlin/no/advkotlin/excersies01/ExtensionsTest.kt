@@ -1,5 +1,5 @@
 package no.advkotlin.excersies01
-
+/*
 import no.advkotlin.exercises01.isEven
 import no.advkotlin.exercises01.isOdd
 import no.advkotlin.exercises01.polite
@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.util.*
-
+*/
 internal class ExtensionsTest {
-
+/*
 
     @Test
     internal fun `is even`() {
@@ -39,4 +39,6 @@ internal class ExtensionsTest {
         Assertions.assertTrue(maybeNumber42.isPresent)
         Assertions.assertEquals(42, maybeNumber42.orElse(0))
     }
+
+ */
 }
