@@ -12,5 +12,7 @@ Slides:
 
 ## Part 1
 [Part 1](exercises-01-functional.md)
+The code is found in directory `exercise01`. 
 
 ## Part 2
+
