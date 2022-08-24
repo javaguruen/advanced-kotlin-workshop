@@ -1,7 +1,6 @@
-package com.hamre.javazone.advkotlin.application.domain
+package no.advkotlin.exercises02.application.domain
 
 import org.springframework.stereotype.Service
-import java.util.UUID
 
 @Service
 class UserService
@@ -16,10 +15,3 @@ class UserService
     }
 }
 
-data class User(
-    val id: UUID? = null,
-    val username: String,
-    val email: String
-) {
-
-}

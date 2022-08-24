@@ -1,4 +1,4 @@
-package com.hamre.javazone.advkotlin.application
+package no.advkotlin.exercises02.application
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

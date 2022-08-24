@@ -1,4 +1,4 @@
-package com.hamre.javazone.advkotlin.application.domain
+package no.advkotlin.exercises02.application.domain
 
 import org.springframework.stereotype.Repository
 import java.util.*

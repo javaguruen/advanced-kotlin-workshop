@@ -1,6 +1,6 @@
-package com.hamre.javazone.advkotlin.application.rest
+package no.advkotlin.exercises02.application.rest
 
-import com.hamre.javazone.advkotlin.application.domain.UserService
+import no.advkotlin.exercises02.application.domain.UserService
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
