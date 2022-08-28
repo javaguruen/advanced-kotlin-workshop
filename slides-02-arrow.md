@@ -5,6 +5,7 @@ paginate: true
 backgroundColor: #fff
 marp: true
 ---
+
 # Part 2
 - Arrow kotlin library
   - https://arrow-kt.io/
@@ -16,6 +17,9 @@ marp: true
 De-facto standardbibliotek for funksjonell programmering i Kotlin. Støtter både:
 - Optional, Either
 - Validated, NonEmptyList (NEL)
+- media i hovedmenyen for kilder til opplæring.
+
+Videre skal vi se på noen måter å bruke Kotlin Arrow på.
 -->
 
 ---
@@ -48,22 +52,33 @@ Merk at her blir Left av typen Throwable
 -->
 
 ---
-# Either block ???
+
+# Either block
+```kotlin
 either {
-  val email = getEmailEither().bind()
+  val email: Email = getEmailEither().bind()
+  val username: Username = getUsernameEither().bind()
+  User(email, username)
 }
-- Ha med?
+```
+
+<!--
+either{} sammen med .bind()
+Vil returnerer en Left på første som (ikke er Right)
+- unboxer fra Right
+Returnerer til slutt en Right av siste verdi
+-->
 
 --- 
 # Either: catch and mapLeft
 
-```
-    fun divideCatchMapLeft(a: Double, b: Double): Either<String, Double> =
-        Either.catch { a/b }
-            //.mapLeft { leftValue: Throwable -> "Cannot divide by zero" }
-            //.mapLeft { _: Throwable -> "Cannot divide by zero" }
-            //.mapLeft { _ -> "Cannot divide by zero" }
-            .mapLeft { "Cannot divide by zero" }
+```kotlin
+fun divideCatchMapLeft(a: Double, b: Double): Either<String, Double> =
+    Either.catch { a/b }
+        //.mapLeft { leftValue: Throwable -> "Cannot divide by zero" }
+        //.mapLeft { _: Throwable -> "Cannot divide by zero" }
+        //.mapLeft { _ -> "Cannot divide by zero" }
+        .mapLeft { "Cannot divide by zero" }
 ```
 <!--
 Eksempel på map left. Mange måter, velg din foretrukne.
@@ -98,33 +113,43 @@ Hvis vi trenger å få en verdi ut fra en Either.
 ---
 # Ensuring valid objects
 - Type safety
-- validated values
+- Validated values
 
+<!--
+Nå skal vi se på et tema som har fasinert meg siden JavaZone 2021 sist desember.
+Hvordan en med ett enkelt grep kan
+- Får bedre typesignaturer
+- Garantere gyldige verdier inn til applikasjonen
+- Samlet logikk om gyldige verdier i felter der hvor det hører hjemme.
+-->
 ---
 
 # Domain types
+Given a class `Event` with the signature:
 ```kotlin
 Event(String, String, LocalDateTime)
 ```
-- Constructor has signature (String, String, LocalDateTime)
-  - How hard is it to find out/remember what is what?
-  - How easy is it to mix the arguments
-  - Where do you put business logic for valid values?
-  - Where do you validate values?
-  - Can we still instanciate invalid User objects?
-  - Did you note that the constructor can throw exception?
-- Consider always naming the arguments.... 
+
+- What are the two Strings?
 
 <!--
 Får mye hjelp fra moderne IDE-er om hva hver paramter er, men ingen hjelp fra kompilatoren om du gjør feil. 
+
+- How hard is it to find out/remember what is what?
+- How easy is it to mix the arguments
+- Where do you put business logic for valid values?
+- Where do you validate values?
+- Can we still instanciate invalid User objects?
+- Did you note that the constructor can throw exception?
 
 Å navngi parametrene er derfor lurt.
 
 Valideringsregler som lengde på brukernavn, gyldige tegn,
 gyldig e-postadresse osv. Ligger gjerne et helt annet sted.
 
-Har likevel ingen garanti for at verdiene ER validerte før User-objektet instansieres.
+Er likevel mulig å instansiere et slikt objekt med ugyldige verdier.
 -->
+
 ---
 # Inline classes
 
@@ -133,7 +158,7 @@ Har likevel ingen garanti for at verdiene ER validerte før User-objektet instan
 @JvmInline
 value class Organizer(val value: String)
 ```
-https://kotlinlang.org/docs/inline-classes.html#members
+https://kotlinlang.org/docs/inline-classes.html
 
 
 
@@ -145,8 +170,10 @@ Primitive typer er optimalisert runtime, mens klasser som instansieres krever he
 Kotlin har introdusert en spesialklasse, inline klasse.
 Koder som om det var en vanlig klasse, men runtime performance som en primitiv.
 -->
+
 ---
-# Inline classes & Custom domain types
+
+# Inline classes as custom domain types
 ```kotlin
 data class Event(val organizer: String, val title: String, val data: LocalDateTime)
 ````
@@ -219,6 +246,10 @@ Either virker, men hvis det er mange valideringsregler eller når en form sendes
 sealed class Validated
 data class Invalid<E>(value: E) : Validated<E, Nothing>
 data class Valid<T>(value: T) : Validated<Nothing, T>
+
+data class ValidationError(val message: String)
+
+typealias ValidationErrors = NonEmptyList<ValidationError>
 ```
 
 <!--
@@ -227,6 +258,12 @@ Arrow har en Validated som ligner på Either.
 Basisklassen kan ikke instansieres, så objektet som kommer tilbake er enten Valid eller Invalid.
 
 Semantisk uttrykker det bedre hva vi har enn en Either.
+
+Typisk brukes Validated for å samle opp feil, mens Either har short circuit på første
+
+Eksemplene bruker en dataklasse ValidationError for én valideringsfeil
+
+Lager typealias for en ikke-tom liste med valideringsfeil. Arrows NonEmptyList (NEL)
 -->
 
 ---
@@ -235,8 +272,6 @@ Semantisk uttrykker det bedre hva vi har enn en Either.
 - Business rules always enforced
 
 ```kotlin
-typealias ValidationErrors = NonEmptyList<ValidationError>
-
 @JvmInline
 value class Organizer private constructor(val value: String) {
     companion object {
@@ -251,18 +286,26 @@ value class Organizer private constructor(val value: String) {
 ```
 
 <!--
-Forretningens regler samlet rundt feltet/typen som regelen gjelder for.
+Forretningens regler og logikk samlet rundt feltet/typen som regelen gjelder for.
 
 Kan ikke opprette en Organisator med ugyldig verdi
 
-Signaturen blir mer type-sikre
+Mer omfattende regler som krever til gang til andre data må ligge utenfor som før,
+f.eks. sjekke om en e-post finnes fra før i databasen. 
+
+Reglene som sjekkes her er med lengde, format, syntaks verdiområde, gyldige tegn osv.
 -->
+
 ---
+
 # Håndtere flere valideringsfeil
 
 ```kotlin
-fun createEvent(organizer: String, title: String, eventDate: LocalDateTime): Validated<ValidationErrors, Event> {
-    val validatedOrganizer = Organizer.newInstance(organizer)
+fun createEvent(organizer: String, title: String, eventDate: LocalDateTime)
+    : Validated<ValidationErrors, Event> {
+
+    // The three are of type Validated<ValidationErrors, XType>
+    val validatedOrganizer: Organizer.newInstance(organizer)
     val validatedTitle = Title.newInstance(title)
     val validatedDate = EventDate.newInstance(eventDate)
     
@@ -276,9 +319,23 @@ fun createEvent(organizer: String, title: String, eventDate: LocalDateTime): Val
 }
 ```
 <!--
-Ignoring the first parameter, from.zip(…, to) works in a similar way, the difference being that, unlike a list, from and to can have at most one (valid!) element. The parameters of our lambda (validFrom, validTo) will always be Valid instances. If any of the emails is not valid, zip won’t invoke our lambda, and it will return an Invalid.
+zip() Tar vanligvis to lister og parer verdier (en fra hver av dem) til en liste av par.
 
-Now let’s go to the first parameter: Semigroup.nonEmptyList(). Sounds scary? A semigroup is one of the most basic structures: it only has one (binary) operation to combine two elements. We can create a semigroup of lists because we have an operation (plus) that we can use to combine two lists. Thus by providing Semigoup.nonEmptyList() as the first parameter, we’re just specifying that, for invalid instances, we want to concatenate non-empty lists.
+Semigroup er en struktur som bare har en operasjon, pluss, for å kombinere to elementer.
+
+For alle Invalid blir listen med valideringsfeil lagt til "semigruppen".
+Lambdaen til slutt blir bare kalt om alle elementene er Valid, og argumentene inn er 
+selve typene, ikke pakket inn, så lambdaen kan bruke dem uten å hente ut eller konvertere.
+
+Resultatet er da enten Valid<User> eller Invalid<ErrorMessages>
+
+Max på 9 argumenter...
 -->
 
 ---
+
+# Exercises 2
+- In the folder exercises02 is a SpringBoot application
+- Read exercises-02-arrow.md for instructions.
+
+Should rewrite application by using inline classes and Validation.

@@ -17,7 +17,7 @@ will return an Optional<E> which is either empty or contains the receiving objec
 # Either
 In the file no.advkotlin.exxercises01.Either.kt:
 
-Create a sealed class `Either<out L, out R>` with two subclasses: 
+Create a sealed class `Either<out L, out R>` with two (inner) subclasses: 
 
 ```kotlin
 data class Left<L>(val value: L) : Either<L, Nothing>(){
