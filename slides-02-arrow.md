@@ -132,6 +132,10 @@ Event(String, String, LocalDateTime)
 
 - What are the two Strings?
 
+```kotlin
+Event(organizer: String, title: String, eventDate: LocalDateTime)
+```
+
 <!--
 Får mye hjelp fra moderne IDE-er om hva hver paramter er, men ingen hjelp fra kompilatoren om du gjør feil. 
 
@@ -175,7 +179,7 @@ Koder som om det var en vanlig klasse, men runtime performance som en primitiv.
 
 # Inline classes as custom domain types
 ```kotlin
-data class Event(val organizer: String, val title: String, val data: LocalDateTime)
+data class Event(val organizer: String, val title: String, val eventDate: LocalDateTime)
 ````
 ```kotlin
 @JvmInline
@@ -206,7 +210,7 @@ value class Organizer private constructor(val value: String) {
         }
         fun newInstanceOrException(candidate: String): Organizer = when {
             candidate.isEmpty() || candidate.isBlank() ->
-                throw java.lang.IllegalArgumentException("Organizer is null og empty string")
+                throw java.lang.IllegalArgumentException("Organizer is null or empty string")
             else -> Organizer(candidate)
         }
     }
@@ -227,7 +231,7 @@ value class Organizer private constructor(val value: String) {
     companion object {
         fun newInstance(candidate: String): Either<ValidationError, Organizer> = when {
             candidate.isEmpty() || candidate.isBlank() -> 
-                ValidationError("Organizer is null og empty string").left()
+                ValidationError("Organizer is null or empty string").left()
             else -> Organizer(candidate).right()
         }
     }
@@ -277,8 +281,8 @@ value class Organizer private constructor(val value: String) {
     companion object {
         fun newInstance(candidate: String): Validated<ValidationErrors, Organizer> = when {
             candidate.isEmpty() || candidate.isBlank() ->
-                ValidationError("Organizer is null og empty string").invalidNel()
-                //ValidationError("Organizer is null og empty string").nel().invalid()
+                ValidationError("Organizer is null or empty string").invalidNel()
+                //ValidationError("Organizer is null or empty string").nel().invalid()
             else -> Organizer(candidate).valid()
         }
     }
@@ -327,7 +331,7 @@ For alle Invalid blir listen med valideringsfeil lagt til "semigruppen".
 Lambdaen til slutt blir bare kalt om alle elementene er Valid, og argumentene inn er 
 selve typene, ikke pakket inn, så lambdaen kan bruke dem uten å hente ut eller konvertere.
 
-Resultatet er da enten Valid<User> eller Invalid<ErrorMessages>
+Resultatet er da enten Valid<Event> eller Invalid<ErrorMessages>
 
 Max på 9 argumenter...
 -->

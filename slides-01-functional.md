@@ -6,17 +6,28 @@ backgroundColor: #fff
 marp: true
 ---
 
-# Tanker
-- Skal vi si noe om domain types osv ifb Validation
-- vrient å implementere Either, typesystemet på map eller mapLeft.
-- operator fun invoke() med privat construktør
-- Optics?
-- functions as FCC
-- composable functions, currying, partially applied
-- assigning function to value
+# Level up your Kotlin skills
+
+Get the repo: 
+`git clone https://github.com/javaguruen/advanced-kotlin-workshop.git`
+
+Morten Nygaard Åsheim
+Bjørn Hamre
 
 ---
+### Part 1
+Extensions
+Null and Exception handling
 
+### Part 2
+Arrow
+Custom domain types
+Validated
+
+### Part 3
+Coroutines
+
+---
 # Extensions
 
 - Functions
