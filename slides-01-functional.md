@@ -11,7 +11,7 @@ marp: true
 Get the repo: 
 `git clone https://github.com/javaguruen/advanced-kotlin-workshop.git`
 
-Morten Nygaard Åsheim
+Morten Nygaard Åsnes
 Bjørn Hamre
 
 ---
