@@ -35,19 +35,4 @@ class WarmupExercises {
         return lists.map { it.sum() }.sum()
     }
 
-    /*
-        application:
-
-        try to set some breakpoints in coroutines and start debug run
-        make sure breakpoint is set to stop all threads
-        look around in the debuger to se active corutines
-
-        Try to add the DebugProbe agent to the application, and dump coroutines
-        with DebugProbe.dumpCoroutines()
-        Remember to call DebugProbe.install()
-        make sure to do it in a place where the coroutines are active
-
-     */
-
-
 }
