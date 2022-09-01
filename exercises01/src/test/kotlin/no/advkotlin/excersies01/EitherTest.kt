@@ -27,8 +27,25 @@ internal class EitherTest {
     }
 */
 
-    //TODO: Test på flatmap
-    
+    /*
+        @Test
+    internal fun `flatmap a right`() {
+        val either: Either<String, String> = Either.Right("42")
+        val mappedEither = either.flatMap { Either.Right(it.toInt()) }
+        assert(mappedEither is Either.Right)
+        assertEquals(42, mappedEither.getOrNull())
+    }
+
+    @Test
+    internal fun `flatmap a left`() {
+        val either: Either<String, String> = Either.Left("42")
+        val mappedEither = either.flatMap { Either.Right(it.toInt()) }
+        assert(mappedEither is Either.Left)
+        assertNull(mappedEither.getOrNull())
+    }
+
+     */
+
     /*
     @Test
     internal fun `mapLeft on a left`() {
