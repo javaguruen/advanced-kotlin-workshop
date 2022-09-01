@@ -4,41 +4,32 @@ import no.advkotlin.exercises01.Either
 import no.advkotlin.exercises01.filter
 import no.advkotlin.exercises01.left
 import no.advkotlin.exercises01.right
+*/
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-*/
+
 @Suppress("USELESS_IS_CHECK")
 internal class EitherTest {
   /*
+    @Test
     internal fun `is left`() {
         val either = Either.Left("Text")
         Assertions.assertNull(either.getOrNull())
     }
-
+*/
+/*
     @Test
     internal fun `is Right`() {
         val either = Either.Right(100)
         assertEquals(100, either.getOrNull())
     }
+*/
 
-    @Test
-    internal fun `map a right`() {
-        val either = Either.Right("42")
-        val mappedEither = either.map { it.toInt() }
-        assert(mappedEither is Either.Right)
-        assertEquals(42, mappedEither.getOrNull())
-    }
-
-    @Test
-    internal fun `map a left`() {
-        val either: Either<String, String> = Either.Left("Error")
-        val mappedEither = either.map { it.toInt() }
-        assert(mappedEither is Either.Left)
-        Assertions.assertNull(mappedEither.getOrNull())
-    }
-
+    //TODO: Test på flatmap
+    
+    /*
     @Test
     internal fun `mapLeft on a left`() {
         val either: Either<String, String> = Either.Left("Error")
@@ -57,7 +48,9 @@ internal class EitherTest {
         val value = (mappedEither as Either.Right).value
         assertEquals(22, value)
     }
+    */
 
+    /*
     @Test
     internal fun `filter right positive predicate`() {
         val either: Either<String, Int> = Either.Right(42)
@@ -82,13 +75,35 @@ internal class EitherTest {
         assertEquals("A left", (filteredEither as Either.Left).value)
     }
 
+    */
+
+    /*
+    @Test
+    internal fun `map a right`() {
+        val either = Either.Right("42")
+        val mappedEither = either.map { it.toInt() }
+        assert(mappedEither is Either.Right)
+        assertEquals(42, mappedEither.getOrNull())
+    }
+
+    @Test
+    internal fun `map a left`() {
+        val either: Either<String, String> = Either.Left("Error")
+        val mappedEither = either.map { it.toInt() }
+        assert(mappedEither is Either.Left)
+        Assertions.assertNull(mappedEither.getOrNull())
+    }
+    */
+
+    /*
     @Test
     internal fun `lift a value to a Left`() {
         val either: Either<String, Int> = "Error".left()
         assertTrue(either is Either.Left)
         assertEquals("Error", (either as Either.Left).value)
     }
-
+    */
+    /*
     @Test
     internal fun `lift a value to a Right`() {
         val either: Either<String, Int> = 42.right()

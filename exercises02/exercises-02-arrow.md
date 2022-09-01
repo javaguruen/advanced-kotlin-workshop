@@ -1,20 +1,12 @@
----
-theme: default
-_class: lead
-paginate: true
-backgroundColor: #fff
-marp: true
----
-
 # Exercises part 2
 The goal of this exercise is to practice implementing a custom domain type/class
 where the business logic for valid values are implemented in the custom type 
 not in a separate validator. Thus we are guaranteed to alway have instances with
 valid values. you will also use the arrow library's Validated when validating the
-values before instanciation.
+values before instantiation.
 
 ## Before you start
-In the directory `exercise02/` there is an appliction that are implemented the
+In the directory `exercise02/` there is an application that are implemented the
 traditional way with a simple rest controller, mapping from api model to domain model and, a servie to "do the things" and a repository to persist Users.
 
 Run `mvn clean install` before you start.

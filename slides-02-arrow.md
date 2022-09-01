@@ -143,7 +143,7 @@ Får mye hjelp fra moderne IDE-er om hva hver paramter er, men ingen hjelp fra k
 - How easy is it to mix the arguments
 - Where do you put business logic for valid values?
 - Where do you validate values?
-- Can we still instanciate invalid User objects?
+- Can we still instantiate invalid User objects?
 - Did you note that the constructor can throw exception?
 
 Å navngi parametrene er derfor lurt.
@@ -305,23 +305,58 @@ Reglene som sjekkes her er med lengde, format, syntaks verdiområde, gyldige teg
 # Håndtere flere valideringsfeil
 
 ```kotlin
-fun createEvent(organizer: String, title: String, eventDate: LocalDateTime)
+fun createEvent(inputOrganizer: String, inputTitle: String, inputEventDate: LocalDateTime)
     : Validated<ValidationErrors, Event> {
 
     // The three are of type Validated<ValidationErrors, XType>
-    val validatedOrganizer: Organizer.newInstance(organizer)
-    val validatedTitle = Title.newInstance(title)
-    val validatedDate = EventDate.newInstance(eventDate)
+    val validatedOrganizer: Validated<ValidationErrors, Organizer> = Organizer.newInstance(inputOrganizer)
+    val validatedTitle: Validated<ValidationErrors, Title> = Title.newInstance(inputTitle)
+    val validatedDate: Validated<ValidationErrors, EventDate> = EventDate.newInstance(inputEventDate)
     
     val validatedEvent: Validated<ValidationErrors, Event> = 
-        validatedOrganizer.zip(Semigroup.nonEmptyList(), 
-            validatedTitle, 
-            validatedDate) { validOrganizer, validTitle, validDate ->
-        Event(validOrganizer, validTitle, validDate)
-    }
+        validatedOrganizer.zip( ...    , 
+            validatedTitle, validatedDate) { ... ->
+                ...
+            }
     return validatedEvent
 }
 ```
+<!--
+zip() Tar vanligvis to lister og parer verdier (en fra hver av dem) til en liste av par.
+
+Semigroup er en struktur som bare har en operasjon, pluss, for å kombinere to elementer.
+
+For alle Invalid blir listen med valideringsfeil lagt til "semigruppen".
+Lambdaen til slutt blir bare kalt om alle elementene er Valid, og argumentene inn er 
+selve typene, ikke pakket inn, så lambdaen kan bruke dem uten å hente ut eller konvertere.
+
+Resultatet er da enten Valid<Event> eller Invalid<ErrorMessages>
+
+Max på 9 argumenter...
+-->
+---
+
+# Håndtere flere valideringsfeil
+`ValidationErrors === NonEmptyList<ValidationError>`
+`SemiGroup.nonEmptyList() === SemiGroup<NonEmptyList<ValidationError>>`
+```kotlin
+fun createEvent(inputOrganizer: String, inputTitle: String, inputEventDate: LocalDateTime)
+    : Validated<ValidationErrors, Event> {
+
+    // The three are of type Validated<ValidationErrors, XType>
+    val validatedOrganizer: Validated<ValidationErrors, Organizer> = Organizer.newInstance(inputOrganizer)
+    val validatedTitle: Validated<ValidationErrors, Title> = Title.newInstance(inputTitle)
+    val validatedDate: Validated<ValidationErrors, EventDate> = EventDate.newInstance(inputEventDate)
+    
+    val validatedEvent: Validated<ValidationErrors, Event> = 
+        validatedOrganizer.zip(Semigroup.nonEmptyList(), 
+            validatedTitle, validatedDate) { organizer, title, eventDate ->
+                Event(organizer, title, eventDate)
+            }
+    return validatedEvent
+}
+```
+
 <!--
 zip() Tar vanligvis to lister og parer verdier (en fra hver av dem) til en liste av par.
 
