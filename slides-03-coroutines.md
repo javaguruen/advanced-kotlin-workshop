@@ -29,7 +29,7 @@ style: |
 
 - Avoid blocking main thread
 - Concurrency with Threads is difficult. Deadlocks & memory leaks
-- Thread are resource hungry
+- Threads are resource hungry
 - Do long computation in the background
 - Do tasks in parallel
 
@@ -226,7 +226,7 @@ suspend fun doSomething(): String = coroutineScope {
 </div>
 <div>
 
-- all functions that can suspend is marked with the `suspend` keyword
+- all functions that can suspend are marked with the `suspend` keyword
 - suspending code can not be called from a non-suspending code
 - but non-suspending code can be called from suspending code
 - a suspend function doesn't provide a CoroutineScope
@@ -326,7 +326,7 @@ Context og dermed tråd kan endres underveis i en korutine med `withContext`
 - Default: General work. Expensive computations. Threadpool based on cpu cores
 - Main: Run on main/UI thread. (Android, JavaFX, Swing)
 - IO: for IO operations. Large threadpool
-- Unconfined: Dont care. same thread
+- Unconfined: Don't care. Same thread
 
 - newSingleThreadContext
 - newFixedThreadPoolContext
@@ -365,7 +365,7 @@ Context og dermed tråd kan endres underveis i en korutine med `withContext`
 # Testing Coroutines
 
 - we can use runBlocking to call suspend functions from tests
-- runTest i similar but uses a special dispatcher for tests
+- runTest is similar but uses a special dispatcher for tests
   - calls to delay will return immediately
   - keeps track of virtual time
 

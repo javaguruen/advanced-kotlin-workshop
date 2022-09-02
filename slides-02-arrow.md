@@ -25,7 +25,8 @@ Videre skal vi se på noen måter å bruke Kotlin Arrow på.
 ---
 # Either with extension functions
 - left(), right() extension functions
-```
+
+```kotlin
 fun divideExtensionFunctions(a: Double, b: Double): Either<String, Double> =
   if (b == 0.0) {
     "Cannot divide by zero".left()
@@ -302,7 +303,7 @@ Reglene som sjekkes her er med lengde, format, syntaks verdiområde, gyldige teg
 
 ---
 
-# Håndtere flere valideringsfeil
+# Handle several validation errors
 
 ```kotlin
 fun createEvent(inputOrganizer: String, inputTitle: String, inputEventDate: LocalDateTime)
@@ -336,7 +337,7 @@ Max på 9 argumenter...
 -->
 ---
 
-# Håndtere flere valideringsfeil
+# Handle several validation errors
 `ValidationErrors === NonEmptyList<ValidationError>`
 `SemiGroup.nonEmptyList() === SemiGroup<NonEmptyList<ValidationError>>`
 ```kotlin

@@ -62,7 +62,7 @@ Remember that map is right oriented and will not be applied if the Either is a l
 Do these if you've got time
 
 ## Implement toOptional()
-Add extension function `toOptional()` to all types (including nullable types). When invoked it
+In the Extension.kt file, add extension function `toOptional()` to all types (including nullable types). When invoked it
 will return an Optional<E> which is either empty or contains the receiving object.
 
 ## Implement left() and right()

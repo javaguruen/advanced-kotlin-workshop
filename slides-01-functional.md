@@ -163,7 +163,7 @@ mulig å kalle den vi .notasjonen på en referanse av den typen.
 
 ---
 # What is printed?
-Note that `printFrunctionType` is defined in class and top level
+Note that `printFunctionType` is defined in class and top level
 
 ```kotlin
 class Example {
@@ -188,7 +188,7 @@ Hvis en funksjon er definert i en klasse og på toppnivå i en fil, vil den i kl
 # Sealed class (and interface)
 
 - Restricts possible subclasses
-- All subclasses must be known compile time
+- All subclasses must be known at compile time
 - Subclasses must be defined in the same package
 - Sealed class is abstract
 - Can have abstract methods
@@ -218,7 +218,7 @@ Tvinges til å håndtere at du ikke har en verdi.
 - Can operate on it
   - filter, map, flatmap, fold
 ```java
-    var maybeValue = Optional.of("Forthy Two")
+    var maybeValue = Optional.of("Forty Two")
         .filter( st -> isNumber(st) )
         .map( Integer::parseInt )
         .map( n -> n * n );
