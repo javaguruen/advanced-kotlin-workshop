@@ -356,6 +356,7 @@ Innebygde dispatchere `Dispatcher.Default|Main|IO|Unconfined` (TODO: beskrivelse
 
 Context og dermed tråd kan endres underveis i en korutine med `withContext`
 -->
+
 ---
 
 # coroutineScope  
@@ -391,39 +392,56 @@ fun scopeTest() {
 
 # Coroutine Builders
 
-## launch, async
+- **launch**  
+extension on `CoroutineScope`
+asynchronous
+returns Job but does not return value from body
+- **async**  
+extension on `CoroutineScope`
+asynchronous
+returns `Deferred` with return value from body
+- **runBlocking**  
+normal function
+synchronous, blocks thread
+returns value from body directly
 
-- extensions on `CoroutineScope`
-- context from CoroutineScope receiver
-- runs asynchronously 
-- exceptions propagate to parent
+<!-- 
+alle kan kalles utenfor et CoroutineScope, men kun runBlocking kan kalles uten en CoroutineContext
+body har suspend modifier, så den kan kalle andre suspoend funksjoner.
+kan kalle async og launch uten å være i en suspend context siden de er vanlige extension funksjoner,
+men kan ikke kalle join eller await siden de er suspend funksjoner
+-->
 
 ---
 
-# Scoping functions
+# Coroutine scoping functions
 
-## coroutineScope, withContext, supervisorScope
-
-- suspending functions
-- context from suspending context
-- runs sequentially 
-- suspends until done
+- **coroutineScope**  
+suspending function  
+creates a new CoroutineScope with a new CoroutineContext based on current context
+runs sequentially, and waits for all containing coroutines to finish
+- **withContext**  
+same as `coroutineScope`, but can configure the new context
+- **supervisorScope**  
+same as `coroutineScope`, but does not propagate exceptions to parent
 
 ---
 
 # Dispatchers
 
-- Default: General work. Expensive computations. Threadpool based on cpu cores
-- Main: Run on main/UI thread. (Android, JavaFX, Swing)
-- IO: for IO operations. Large threadpool
-- Unconfined: Don't care. Same thread
+- **Default**  
+General work. Expensive computations. Threadpool based on cpu cores
+- **Main**  
+Run on main/UI thread. (Android, JavaFX, Swing)
+- **IO**  
+for IO operations. Large threadpool
+- **Unconfined**  
+Don't care. Same thread
 
-- newSingleThreadContext
-- newFixedThreadPoolContext
+In addition custom Dispatchers can be created, for instance with `newSingleThreadContext` or `newFixedThreadPoolContext`
 
 <!--
-  newSingleThreadContext(
-  newFixedThreadPoolContext()
+
 -->
 
 ---
@@ -443,8 +461,35 @@ fun scopeTest() {
 
 # Cancellation
 
-- Cooperative
-- Cancelled parent will cancel all children
+```kotlin
+val job = launch {
+  
+    launch {
+        delay(2000L)
+    }.also { it.invokeOnCompletion { println("C1 Done $it") } }
+
+    launch {
+        delay(500L)
+    }.also { it.invokeOnCompletion { println("C2 Done $it") } }
+}
+job.invokeOnCompletion { println("P Done $it") }
+
+delay(700L)
+job.cancel()
+job.join()
+
+// C2 Done null
+// C1 Done kotlinx.coroutines.JobCancellationException
+// P Done kotlinx.coroutines.JobCancellationException
+```
+
+<!--
+kansellering er cooperativ. korutiner kan kun stoppe på suspension points.
+vi kan kalle join på job etter cancell for å vente til den er faktisk stoppet.
+finnes en funksjon som kombinerer begge cancellAndJoin()
+kansellert parent vil kansellere barn
+
+-->
 
 ---
 
