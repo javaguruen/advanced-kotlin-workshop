@@ -25,38 +25,17 @@ style: |
 
 ---
 
-# Coroutines - Motivation
-
-- Avoid blocking main thread
-- Concurrency with Threads is difficult. Deadlocks & memory leaks
-- Threads are resource hungry
-- Do long computation in the background
-- Do tasks in parallel
-
-<!--
-  Langvarige operasjoner som nettverkskall og disk io blokkerer tråden
-  mens de venter på svar. For en interaktiv applikasjon (mobil, js, gui) vil
-  ui bli uresponsivt om blokkererman tråden som oppdaterer ui.
-
-  Kan løses med tråder, men tråder er vanskelig å gjøre riktig. Kan føre til
-  minnelekasje. Tråder er "tunge" å switche mellom. Vanskelig å debugge.
-  i motsetning til kode med callbacks blir kode nesten lik vanlig kode
--->
-
----
-
 # What is a coroutine?
 
 <div class="columns">
 <div>
 
 ```kotlin
-    val job = launch {
-        println("Coroutine started")
-        delay(1000L)
-        println("Coroutine done")
-    }
-    println("Coroutine launched")
+launch {
+    println("Coroutine started")
+    delay(1000L)
+    println("Coroutine done")
+}
 ```
 
 </div>
@@ -73,9 +52,29 @@ style: |
   Korutiner stammer tilbake til 60 tallet, men ble først popularisert med
   goroutines i Golang. 
   Korutiner baserer seg på at en funksjon kan suspendes for å så fortsette senere. 
-  Korutin api er på et høyere abstraksjonsnivå enn tråder. Kotlin håndterer
+  Korutine api er på et høyere abstraksjonsnivå enn tråder. Kotlin håndterer
   bytting av hvilke korutiner som kjører og blir suspended, og kan gjenbruke minnet 
   til en suspended korutine. Korutine er mye mindre ressurskrevende enn tråder.
+-->
+
+---
+
+# Coroutines - Motivation
+
+- Avoid blocking main thread
+- Do long computation in the background
+- Threads are resource hungry
+- Concurrency with Threads is difficult. Deadlocks & memory leaks
+- Do tasks in parallel
+
+<!--
+  Langvarige operasjoner som nettverkskall og disk io blokkerer tråden
+  mens de venter på svar. For en interaktiv applikasjon (mobil, js, gui) vil
+  ui bli uresponsivt om blokkererman tråden som oppdaterer ui.
+
+  Kan løses med tråder, men tråder er vanskelig å gjøre riktig. Kan føre til
+  minnelekasje. Tråder er "tunge" å switche mellom. Vanskelig å debugge.
+  i motsetning til kode med callbacks blir kode nesten lik vanlig kode
 -->
 
 ---
@@ -85,69 +84,55 @@ style: |
 <div>
 
 ```kotlin
-    val job = launch {
-        println("Coroutine started")
-        delay(1000L)
-        println("Coroutine done")
-    }
-    println("Coroutine launched")
+val job: Job = launch {
+    println("Coroutine started")
+    delay(1000L)
+    println("Coroutine done")
+}
+println("Coroutine launched")
 
-    job.cancel()
-    job.join()
+// Coroutine launched
+// Coroutine started
+// Coroutine done
 ```
-
 </div>
 
 <div>
 
-- Build and launch a lambda as a coroutine
-- extension function on CoroutineScope
-- returns Job
+- Builds coroutine and starts it immediately
+- extension function on CoroutineScope interface
+- returns a `Job`
   can cancel or wait for completion
-- does not return a value from the lambda
+- does not return a value from the lambda (other than the job)
 - waits for coroutines inside to finish (suspends but does not block)
-  - for GlobalScope it does not wait for contained coroutines to finish
 
 </div>
 </div>
 
 <!--
   launch er en coroutine builder som lager en korutine, som startes umiddelbart (men det 
-  kan konfigureres).
+  kan konfigureres). 
   Den er implementert som en extension funksjon på interface CoroutineScope. launch returnerer
   en instans av Job. den har metoder for bla.a å kansellere en korutine, eller vente 
   på at den skal fullføre.
-
-  Det finnes en subklasse av CorutineScope, GlobalScope som kjører korutinen utenfor
-  structured concurency. Dvs. alt av opprydding av ressurser ved feilsitasjoer. Den må
-  derfor brukes forsiktig.
 -->
 
 ---
 
-# Async / Await
+# async / await
 
 <div class="columns">
 <div>
 
 ```kotlin
-    val result: Deferred<Int> = async {
-        delay(1000L)
-        42
-    }
-    val intValue = result.await()
-    println("Result=$intValue")
-```
+val result: Deferred<Int> = async {
+    delay(1000L)
+    42
+}
+val intValue = result.await()
+println("The answer is $intValue")
 
-```kotlin
-    val deferreds: List<Deferred<Int>> = (1..100).map {
-        async {
-            delay(1000)
-            it
-        }
-    }
-    val list: List<Int> = deferreds.awaitAll()
-    println("Sum = ${list.sum()}")
+// The answer is 42
 ```
 
 </div>
@@ -159,6 +144,34 @@ style: |
 - Can cancel or join like with Job
 - Can also `await`, which produces a value when completed
 - `await` will suspend until value is ready
+
+</div>
+</div>
+
+---
+
+# async / await (continued)
+
+<div class="columns">
+<div>
+
+```kotlin
+val deferreds: List<Deferred<Int>> = (1..100).map {
+    async {
+        delay(1000)
+        it
+    }
+}
+val list: List<Int> = deferreds.awaitAll()
+println("Sum = ${list.sum()}")
+
+// Sum = 5050
+```
+
+</div>
+<div>
+
+
 - If you need to await on multiple `Deferred` there is `awaitAll(...)`
 
 </div>
@@ -172,11 +185,13 @@ style: |
 <div>
 
 ```kotlin
-    val s = runBlocking {
-        delay(1000L)
-        "world!"
-    }
-    println("Hello, $s")
+val s = runBlocking {
+    delay(1000L)
+    "world!"
+}
+println("Hello, $s")
+
+// Hello, world!
 ```
 </div>
 <div>
@@ -194,12 +209,54 @@ style: |
   og bruker den aktuelle tråden til å kjøre korutinen. 
   Den er en bro mellom "vanlig" kode og korutiner (suspending functions)
   Siden runBlocking skal kunne kalles fra normal kode kan den ikke suspende selv,
-  men må blokkere tråden den kjører i til corutinene er ferdig
+  men må blokkere tråden den kjører i til corutinene er ferdig. Returnerer siste verdi fra lambdaen direkte
 -->
 
 ---
 
 # Suspend Functions
+
+<div class="columns">
+<div>
+
+```kotlin
+suspend fun doSomething(): String = coroutineScope {
+  delay(100L)
+
+  val result = async {
+    delay(100L)
+    "done"
+  }
+  "I am ${result.await()}"
+}
+
+// I am done
+```
+
+</div>
+<div>
+
+- all functions that can suspend are marked with the `suspend` keyword
+- suspending code can not be called from a non-suspending code
+- but non-suspending code can be called from suspending code
+- a suspend function doesn't provide a CoroutineScope
+  - (we can use `coroutineScope {}` for that)
+
+</div>
+
+<!--
+suspend er et nøkkelord i kotlin. Det markerer at funksjonen kan suspende og resume.
+når den kompileres har den derfor et ekstra argument, som vi ikke ser i signaturen her
+
+Funksjoner som `runBlocking` og 
+`coroutineScope {}` kan benyttes i en suspend funksjon for å få tilgang til 
+coroutine scopet som funksjonen blir kallet fra kan man bruke couroutineScope
+
+-->
+
+---
+
+# Suspend functions (continued)
 
 <div class="columns">
 <div>
@@ -212,36 +269,25 @@ public fun <T> CoroutineScope.async(
 ): Deferred<T> 
 ```
 
-```kotlin
-suspend fun doSomething(): String = coroutineScope {
-  delay(100L)
-
-  val result = async {
-    delay(100L)
-    42
-  }
-  "Hello ${result.await()}"
-}
-```
 </div>
 <div>
 
-- all functions that can suspend are marked with the `suspend` keyword
-- suspending code can not be called from a non-suspending code
-- but non-suspending code can be called from suspending code
-- a suspend function doesn't provide a CoroutineScope
-  - (we can use `coroutineScope` for that)
+- `suspend` keyword in function signature
+  - also for lambda
+- `this` er bundet til et CoroutineScope i body
 
+</div>
 </div>
 
 <!--
-Funksjoner som `runBlocking` og 
-`coroutineScope {}` kan benyttes i en suspend funksjon for å få tilgang til 
-coroutine scopet som funksjonen blir kallet fra kan man bruke couroutineScope
-
+block er en lambda med en CoroutineScope receiver, som gjør at this er bundet til 
+et CoroutineScope når lambdaen vi angir kjører. på samme måte som for en funksjon definert
+med suspend fun makrkerer vi her at block er suspending, og derfor kan kalle andre suspend
+funksjoner.
 -->
 
 ---
+
 
 # Structured concurrency
 
