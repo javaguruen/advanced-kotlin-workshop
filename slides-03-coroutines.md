@@ -495,6 +495,21 @@ kansellert parent vil kansellere barn
 
 # Error handling
 
+- Exceptions propogate to parent coroutines
+- supervisorScope, SupervisorJob
+- try catch works as expected inside a coroutine
+- but wrapping a coroutine in a try block does not work
+
+<!--
+exception i en coroutine cancellerer den, exceptions propageres til parent, som cancellerer barn,
+og seg selv, helt opp til ytterste korutine, som avslutter applikasjonen.
+Try catch "rundt" en coroutine fungerer ikke, fordi exception blir propagert via job hierarkiet,
+og ikke på vanlig måte
+SupervisorJob ignorerer exceptions i barn
+CoroutineExceptionHandler can be installed to the top level coroutine to handle uncaught exceptions
+anbefalt å bruke try catch på innsiden av en korutine
+-->
+
 ---
 
 # Testing Coroutines
