@@ -71,9 +71,9 @@ internal class EitherTest {
     @Test
     internal fun `filter right positive predicate`() {
         val either: Either<String, Int> = Either.Right(42)
-        val filteredEither = either.filter({i -> i%2==0}, { Either.Left("Not an even number") })
+        val filteredEither = either.filter({i -> i%2==0}, { "Not an even number" })
         assertTrue(filteredEither is Either.Right)
-        assertEquals(42, (filteredEither as Either.Right).value)
+        assertEquals(42, either.getOrNull())
     }
 
     @Test
@@ -87,11 +87,10 @@ internal class EitherTest {
     @Test
     internal fun `filter left gives left`() {
         val either: Either<String, Int> = Either.Left("A left")
-        val filteredEither = either.filter({i -> i%2==0}, { Either.Left("Not an even number") })
+        val filteredEither = either.filter({i -> i%2==0}, { "Not an even number" })
         assertTrue(filteredEither is Either.Left)
         assertEquals("A left", (filteredEither as Either.Left).value)
     }
-
     */
 
     /*
