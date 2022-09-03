@@ -273,8 +273,8 @@ public fun <T> CoroutineScope.async(
 <div>
 
 - `suspend` keyword in function signature
-  - also for lambda
-- `this` er bundet til et CoroutineScope i body
+- lambda body is also `suspend`
+- `this` is bound to a CoroutineScope in the lambda body
 
 </div>
 </div>
@@ -288,6 +288,19 @@ funksjoner.
 
 ---
 
+# Suspend points
+
+![](images/screenshot_suspend.png)
+
+<!--
+suspend og resume kan kun skje på suspend points. Intellij viser hvor i margen.
+kall til coroutine biblioteket er typisk suspend points. også tredjeparts bibliotek som
+støtter korutiner. Om man f.eks gjør en http request med en http klient som er beregnet
+for bruke med korutiner, vil den suspende når http requesten gjøres, og resumes når responsen
+kommer tilbake.
+-->
+
+---
 
 # Structured concurrency
 
