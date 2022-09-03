@@ -331,7 +331,8 @@ kommer tilbake.
   hierarki som samsvarer med organiseringen av koden, og som sørger for at feil
   propagerer oppover om de ikke håndteres.
 
-StructuredConcurency betyr at korutiner arver context egenskaper (som Job og dispatcher) fra korutinen den startes i (parent). Om forelder korutinen blir canceled, vil
+StructuredConcurency betyr at korutiner arver context egenskaper (som Dispatcher) fra korutinen den startes i (parent). 
+Om forelder korutinen blir cancelled, vil
 alle child korutiner også bli canceled. Dette gir en naturlig måte å organisere korutiner på. 
 -->
 
@@ -339,12 +340,12 @@ alle child korutiner også bli canceled. Dette gir en naturlig måte å organise
 
 # CoroutineScope
 
-- Holds a CoroutineContext
+- Holds a `CoroutineContext`
 - Coroutine builders as extension functions 
-  - launch
-  - async
-- Coroutine builders inherit context from CoroutineScope
-- `coroutineScope { }` creates a new CoroutineScope
+  - `launch`
+  - `async`
+- Coroutine builders inherit context from `CoroutineScope`
+- `coroutineScope { }` creates a new `CoroutineScope`
   - used in suspending function gives access to calling scope
   
 <!--
@@ -355,6 +356,36 @@ Innebygde dispatchere `Dispatcher.Default|Main|IO|Unconfined` (TODO: beskrivelse
 
 Context og dermed tråd kan endres underveis i en korutine med `withContext`
 -->
+---
+
+# coroutineScope  
+
+```kotlin
+suspend fun downloadResource(url: URL): Resource = coroutineScope {
+    // Using a suspending client
+    httpClient.get(url)
+}
+
+suspend fun downloadResource(url: URL): Resource = withContext(Dispatchers.IO) {
+    // Using a blocking client
+    httpClient.get(url)
+}
+```
+
+---
+
+# Combining contexts
+
+```kotlin
+fun scopeTest() {
+    runTest {
+        val c1 = currentCoroutineContext() + CoroutineName("c1") + Dispatchers.IO
+        val c2 = c1 + Job() + CoroutineName("c2")
+        
+        assertEquals(c1[CoroutineDispatcher], c2[CoroutineDispatcher])
+    }
+}
+```
 
 ---
 
@@ -371,7 +402,7 @@ Context og dermed tråd kan endres underveis i en korutine med `withContext`
 
 # Scoping functions
 
-## coroutineScope, supervisorScope, withContext
+## coroutineScope, withContext, supervisorScope
 
 - suspending functions
 - context from suspending context
