@@ -10,9 +10,9 @@ class DepartureDisplay(val timetableService: TimetableService, val realTimeServi
         val header = StringBuilder()
         header.append(ansi().eraseScreen())
         header.append("                  DEPARTURES\n\n")
-        header.append("==================================================\n")
-        header.append("  #  To                   Gate     Departure\n")
-        header.append("--------------------------------------------------\n")
+        header.append("====================================================\n")
+        header.append("  #    To                   Gate     Departure\n")
+        header.append("----------------------------------------------------\n")
         print(header)
         val table = StringBuilder()
 
@@ -22,9 +22,9 @@ class DepartureDisplay(val timetableService: TimetableService, val realTimeServi
             } else {
                 "@|green ${departureAndTime.departure.time}|@"
             }
-            table.append(ansi().render(String.format("%4s %-20s %5s    %-15s\n", departureAndTime.departure.code, departureAndTime.departure.destination, departureAndTime.departure.gate, timeString)))
+            table.append(ansi().render(String.format("%-6s %-20s %-5s    %-15s\n", departureAndTime.departure.code, departureAndTime.departure.destination, departureAndTime.departure.gate, timeString)))
         }
-        table.append("--------------------------------------------------\n")
+        table.append("----------------------------------------------------\n")
         print(table)
 
     }
