@@ -6,7 +6,7 @@ class DepartureDisplay(val timetableService: TimetableService, val realTimeServi
 
     val departureFetcher = DepartureFetcher(timetableService, realTimeService)
 
-    fun update() {
+    suspend fun update() {
         val header = StringBuilder()
         header.append(ansi().eraseScreen())
         header.append("                  DEPARTURES\n\n")
