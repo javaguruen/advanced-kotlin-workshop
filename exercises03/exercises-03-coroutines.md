@@ -4,8 +4,8 @@
 
 In these warm up exercises we will convert some simple functions to use coroutines. 
 
-In `no.advkotlin.exercises03.warmup.Exercises` there are 3 functions that should be converted
-to use coroutines.
+In [no.advkotlin.exercises03.warmup.WarmupExercises](src/main/kotlin/no/advkotlin/exercises03/warmup/WarmupExercises.kt)
+there are 3 functions that should be converted to use coroutines.
 
 ### Hello World
 
@@ -14,7 +14,9 @@ fun helloWorld(): String
 ```
 
 This function starts two threads to produce a particular String. Convert it to use two coroutines
-instead. There is a corresponding test in `ExercisesTest` that you might have to modify as well.
+instead. There is a corresponding test in 
+[WarmupExercisesTest](src/test/kotlin/no/advkotlin/exercises03/warmup/WarmupExercisesTest.kt) 
+that you might have to modify as well.
 
 ### Max Elements
 
@@ -38,11 +40,11 @@ are done.
 
 ## Part 2 - User Service
 
-In these exercises we will work with `no.advkotlin.exercises03.userservice.service.UserService` a simple
-service with to methods. One to retrieve a `User` from a `userId`. And one to retrieve a list `List<Product>`
+In these exercises we will call some methods on the service 
+[no.advkotlin.exercises03.userservice.service.UserService](src/main/kotlin/no/advkotlin/exercises03/userservice/service/UserService.kt)
+a simple service with to methods. One to retrieve a `User` from a `userId`. And one to retrieve a list `List<Product>`
 belonging to this user. This service has some hard coded data, and a built in delay of 1 second for each 
 method. This is to simulate a service that would retrieve the data from a database or network call.
-
 
 
 ```kotlin
@@ -51,8 +53,11 @@ suspend fun getUser(userId: String): User
 suspend fun getProducts(userId: String): List<Product>
 ```
 
-The functions that you will implement are in `no.advkotlin.exercises03.userservice.service.UserExercises`. Corresponding 
-tests are in `UserExercisesTest`. The test are commented out as they will no succeed until the exercises are done. You can 
+The functions that you will implement are in
+[no.advkotlin.exercises03.userservice.service.UserExercises](src/main/kotlin/no/advkotlin/exercises03/userservice/service/UserExercises.kt). 
+Corresponding tests are in
+[UserExercisesTest](src/test/kotlin/no/advkotlin/exercises03/userservice/UserExercisesTest.kt). 
+The test are commented out as they will no succeed until the exercises are done. You can 
 comment in the tests one by one as you work through implementing the functions.
 
 Notice that the tests use the `runTest` coroutine builder which provides a special TestDispatcher that will keep
@@ -89,15 +94,24 @@ calls to the service should be done concurrently, so the virtual running time sh
 In this exercise we are looking to improve an airport departures information screen. The data is rather static,
 and the service we are using have some built in delays to simulate network traffic when fetching timetables.
 
-There are two services we will use, `TimetableService` gives a list of the next departures as they are scheduled, 
-and `RealTimeService` which is used to get the live departure time for a particular flight. The `RealTimeService`
+There are two services we will use,
+[no.advkotlin.exercises03.timetable.service.TimetableService](src/main/kotlin/no/advkotlin/exercises03/timetable/service/TimetableService.kt)
+gives a list of the next departures as they are scheduled, 
+and
+[no.advkotlin.exercises03.timetable.service.RealTimeService](src/main/kotlin/no/advkotlin/exercises03/timetable/service/RealTimeService.kt)
+which is used to get the live departure time for a particular flight. The `RealTimeService`
 is unfortunately a little unreliable, so once in a while it will throw a `TimeoutException`
 
-The `DepartureFetcher` uses these services, to first fetch the timetable, and then for each departure in the table
-fetch the live time. Your task is to improve this by using coroutines to fetch all the live times concurrently.
+The
+[no.advkotlin.exercises03.timetable.service.DepartureFetcher](src/main/kotlin/no/advkotlin/exercises03/timetable/service/DepartureFetcher.kt)
+uses these services, to first fetch the timetable, and then for each departure in the table
+fetch the live time. 
+
+Your task is to improve `DepartureFetcher` by using coroutines to fetch all the live times concurrently. You should see
+the delay between the header and table being printed come down significantly when you run the application.
 
 The application can be run directly from your IDE, but looks a little better when run in a terminal 
-(suporting ansi color codes)
+(suporting ansi color and clear-screen codes)
 
 you can make a runnable jar file by doing `mvn package` in the exercises03 directory, and then run the application
 with `java -jar target/coroutines-0.0.1-SNAPSHOT-jar-with-dependencies.jar`
