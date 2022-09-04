@@ -242,8 +242,6 @@ suspend fun doSomething(): String = coroutineScope {
 - a suspend function doesn't provide a CoroutineScope
   - (we can use `coroutineScope {}` for that)
 
-</div>
-
 <!--
 suspend er et nøkkelord i kotlin. Det markerer at funksjonen kan suspende og resume.
 når den kompileres har den derfor et ekstra argument, som vi ikke ser i signaturen her
@@ -251,8 +249,10 @@ når den kompileres har den derfor et ekstra argument, som vi ikke ser i signatu
 Funksjoner som `runBlocking` og 
 `coroutineScope {}` kan benyttes i en suspend funksjon for å få tilgang til 
 coroutine scopet som funksjonen blir kallet fra kan man bruke couroutineScope
-
 -->
+
+</div>
+</div>
 
 ---
 
@@ -322,6 +322,7 @@ kommer tilbake.
 - cancellation of parent propagates to children
 - errors in children propagate to parents
 - ensures proper cleanup of resources
+
 </div>
 </div>
 
