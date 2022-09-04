@@ -95,8 +95,8 @@ println("Coroutine launched")
 // Coroutine started
 // Coroutine done
 ```
-</div>
 
+</div>
 <div>
 
 - Builds coroutine and starts it immediately
@@ -489,7 +489,6 @@ kansellering er cooperativ. korutiner kan kun stoppe på suspension points.
 vi kan kalle join på job etter cancell for å vente til den er faktisk stoppet.
 finnes en funksjon som kombinerer begge cancellAndJoin()
 kansellert parent vil kansellere barn
-
 -->
 
 ---
@@ -519,6 +518,13 @@ anbefalt å bruke try catch på innsiden av en korutine
 - runTest is similar but uses a special dispatcher for tests
   - calls to delay will return immediately
   - keeps track of virtual time
+
+<!--
+For at TestDispatcher skal benyttes, kan ikke koden vi skal sette egen dispatcher,
+men må få arvet dispatcher fra parent context. Om det er nødvendig å spesifisere
+dispatcher i koden (f.eks Dispatchers.IO for kall som blokkerer) kan man la
+dispatcheren bli injected, slik at TestDispatcher kan injectes i test.
+-->
 
 ---
 
