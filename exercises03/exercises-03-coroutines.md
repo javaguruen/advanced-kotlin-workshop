@@ -54,7 +54,7 @@ suspend fun getProducts(userId: String): List<Product>
 ```
 
 The functions that you will implement are in
-[no.advkotlin.exercises03.userservice.service.UserExercises](src/main/kotlin/no/advkotlin/exercises03/userservice/service/UserExercises.kt). 
+[no.advkotlin.exercises03.userservice.UserExercises](src/main/kotlin/no/advkotlin/exercises03/userservice/UserExercises.kt). 
 Corresponding tests are in
 [UserExercisesTest](src/test/kotlin/no/advkotlin/exercises03/userservice/UserExercisesTest.kt). 
 The test are commented out as they will no succeed until the exercises are done. You can 
