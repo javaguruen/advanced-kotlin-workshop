@@ -8,26 +8,44 @@ marp: true
 
 # Level up your Kotlin skills
 
-Get the repo: 
-`git clone https://github.com/javaguruen/advanced-kotlin-workshop.git`
+## Bjørn Hamre & Morten Nygaard Åsnes
 
-Morten Nygaard Åsnes
-Bjørn Hamre
+<br>
 
----
-### Part 1
-Extensions
-Null and Exception handling
+Preperations:
 
-### Part 2
-Arrow
-Custom domain types
-Validated
+- Install Java 17
+- `git clone https://github.com/javaguruen/advanced-kotlin-workshop.git`
 
-### Part 3
-Coroutines
+<br>
+
+[@javaguruen](twitter.com/javaguruen)
+[@mortenaa](twitter.com/mortenaa)
 
 ---
+
+### Part 1 (70 min.)
+- Extensions
+- Null and Exception handling
+
+### Part 2 (70 min.)
+- Arrow
+- Custom domain types
+- Validated
+
+### Pause (10 min.)
+
+### Part 3 (80 min.)
+- Coroutines
+
+### Summary (10 min.)
+
+<!--
+Disclaimer: Vi er ikke eksperter
+-->
+
+---
+
 # Extensions
 
 - Functions

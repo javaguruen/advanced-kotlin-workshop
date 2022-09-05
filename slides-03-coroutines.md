@@ -8,20 +8,6 @@ style: |
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
   }
----
-
-# Coroutines
-
-<br/>
-
-### JavaZone 2022
-### Bjørn Hamre & Morten Nygaard Åsnes
-
-
-<br/>
-
-[@mortenaa](twitter.com/mortenaa)
-[@javaguruen](twitter.com/javaguruen)
 
 ---
 
@@ -542,3 +528,18 @@ dispatcheren bli injected, slik at TestDispatcher kan injectes i test.
 - Breakpoints need to suspend all threads
 - Intellij will show current coroutines and contexts
 - A special JVM agent can be installed to enable dumping of coroutines from code
+
+---
+
+# Exercises 3
+
+---
+
+# Thank you for attending our workshop
+
+## Feedback or questions?
+
+<br>
+
+[@javaguruen](twitter.com/javaguruen)
+[@mortenaa](twitter.com/mortenaa)
