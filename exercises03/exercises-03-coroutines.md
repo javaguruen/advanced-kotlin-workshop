@@ -125,7 +125,7 @@ Here are some extra things do try out if you've come this far
 Try to add some breakpoints to the timetable application, and look at what information intellij can show you on
 active coroutines. Remember to select to stop all threads for the breakpoint, or it might not work.
 
-Try to add the DebugProbe agent to the application, and dump coroutines with DebugProbe.dumpCoroutines()
+Try to add the DebugProbe agent to the application, and dump coroutines with `DebugProbes.dumpCoroutines()`
 Remember to call `DebugProbes.install()` when the application starts. And make sure to do the dump from
 a place where the coroutines are active.
 
