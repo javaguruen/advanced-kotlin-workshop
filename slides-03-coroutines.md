@@ -27,34 +27,21 @@ style: |
 
 # What is a coroutine?
 
-<div class="columns">
-<div>
-
 ```kotlin
-launch {
-    println("Coroutine started")
-    delay(1000L)
-    println("Coroutine done")
-}
+  launch {
+      println("Coroutine started")
+      delay(1000L)
+      println("Coroutine done")
+  }
 ```
 
-</div>
-<div>
-
-- A computation that can be suspended and resumed
-- Lightweight & fast switching
-- Easier to manage than threads
-- Can be run on one or many threads
-
-</div>
-</div>
 <!--
   Korutiner stammer tilbake til 60 tallet, men ble først popularisert med
   goroutines i Golang. 
-  Korutiner baserer seg på at en funksjon kan suspendes for å så fortsette senere. 
-  Korutine api er på et høyere abstraksjonsnivå enn tråder. Kotlin håndterer
-  bytting av hvilke korutiner som kjører og blir suspended, og kan gjenbruke minnet 
-  til en suspended korutine. Korutine er mye mindre ressurskrevende enn tråder.
+  Korutiner baserer seg på at en funksjon kan stoppes (suspend) for å så fortsette senere (resume)
+  Korutine api er på et høyere abstraksjonsnivå enn tråder. 
+  Korutiner er ikke et konsept på os nivå som tråder. Kotlin håndterer
+  bytting av hvilke korutiner som kjører og blir suspended, og kan gjenbruke minnet til en suspended korutine.
 -->
 
 ---
@@ -68,13 +55,18 @@ launch {
 - Do tasks in parallel
 
 <!--
+  For en interaktiv applikasjon (mobil, js, gui) vil
+  ui bli uresponsivt om vi blokkerer tråden som oppdaterer ui. (Main tråd)
   Langvarige operasjoner som nettverkskall og disk io blokkerer tråden
-  mens de venter på svar. For en interaktiv applikasjon (mobil, js, gui) vil
-  ui bli uresponsivt om blokkererman tråden som oppdaterer ui.
+  mens de venter på svar. Det er derfor ikke anbefalt å gjøre dette fra
+  Main tråden.
 
-  Kan løses med tråder, men tråder er vanskelig å gjøre riktig. Kan føre til
-  minnelekasje. Tråder er "tunge" å switche mellom. Vanskelig å debugge.
-  i motsetning til kode med callbacks blir kode nesten lik vanlig kode
+  Kan løses med tråder, starte opp en ny tråd for å gjøre arbeidet.
+  men tråder er vanskelig å gjøre trygt. Kan føre til
+  minnelekasje. Tråder er "tunge" å switche mellom. Korutiner er lettvekts og 
+  raske å bytte mellom.
+
+  En annen løsning er callbacks, men I motsetning til kode med callbacks blir kode med korutiner nesten lik vanlig kode.
 -->
 
 ---
@@ -90,6 +82,7 @@ val job: Job = launch {
     println("Coroutine done")
 }
 println("Coroutine launched")
+job.join()
 
 // Coroutine launched
 // Coroutine started
@@ -110,11 +103,13 @@ println("Coroutine launched")
 </div>
 
 <!--
-  launch er en coroutine builder som lager en korutine, som startes umiddelbart (men det 
-  kan konfigureres). 
-  Den er implementert som en extension funksjon på interface CoroutineScope. launch returnerer
-  en instans av Job. den har metoder for bla.a å kansellere en korutine, eller vente 
-  på at den skal fullføre.
+  Hvordan starter vi en korutine?
+  launch er en coroutine builder som lager en korutine, som startes umiddelbart 
+  Den er implementert som en extension funksjon på interface CoroutineScope. launch starter korutinen asynkront, den returnerer umiddelbart, og venter ikke på at korutinen skal bli ferdig,
+  men den returnerer en instans av Job som vi kan bruke til å vente på den. Job kan også brukes til å avbryte korutinen (cancell). Når vi venter på at den blir ferdig med join, blokkerer vi ikke tråden vi kjører på som med join på en thread, men suspender til korutinen er ferdig.
+  Om vi starter flere korutiner inni denne korutinen, vil den ikke fullføre før
+  de er ferdige.
+  [Forklar koden og hva output blir]
 -->
 
 ---
@@ -148,6 +143,13 @@ println("The answer is $intValue")
 </div>
 </div>
 
+<!--
+Starter en ny korutine som launch, med returnerer en Deferred som er en subklasse av Job. Vi kan derfor kalle join for å vente som ved launch, men vi
+kan også bruke await som venter og gir returverdien fra korutinen. Dvs siste
+expression i lambdaen. Som ved join vil await ikke blokkere, men suspende
+[Forklar koden]
+-->
+
 ---
 
 # async / await (continued)
@@ -177,39 +179,10 @@ println("Sum = ${list.sum()}")
 </div>
 </div>
 
----
-
-# runBlocking
-
-<div class="columns">
-<div>
-
-```kotlin
-val s = runBlocking {
-    delay(1000L)
-    "world!"
-}
-println("Hello, $s")
-
-// Hello, world!
-```
-</div>
-<div>
-
-- Starts a coroutine with a new context
-- can be called from "normal" code
-- not usually used outside of tests or main function
-- waits for all contained coroutines to finish
-- blocks the thread!
-
-</div>
-</div>
 <!--
-  `runBlocking` er en korutine builder som blokerer til korutinen er ferdig. Den lager en ny korutine, 
-  og bruker den aktuelle tråden til å kjøre korutinen. 
-  Den er en bro mellom "vanlig" kode og korutiner (suspending functions)
-  Siden runBlocking skal kunne kalles fra normal kode kan den ikke suspende selv,
-  men må blokkere tråden den kjører i til corutinene er ferdig. Returnerer siste verdi fra lambdaen direkte
+Ofte vil man starte mange korutiner asynkront, og så vente på at alle skal fullføre. Da kan man bruke awaitAll som er en extension på Liste av Deferred. 
+den suspender til alle er ferdige, og så produserer den en liste av verdiene til
+alle korutinene.
 -->
 
 ---
@@ -298,6 +271,42 @@ kall til coroutine biblioteket er typisk suspend points. også tredjeparts bibli
 støtter korutiner. Om man f.eks gjør en http request med en http klient som er beregnet
 for bruke med korutiner, vil den suspende når http requesten gjøres, og resumes når responsen
 kommer tilbake.
+-->
+
+---
+
+# runBlocking
+
+<div class="columns">
+<div>
+
+```kotlin
+val s = runBlocking {
+    delay(1000L)
+    "world!"
+}
+println("Hello, $s")
+
+// Hello, world!
+```
+
+</div>
+<div>
+
+- can be called from "normal" code
+- not usually used outside of tests or main function
+- waits for all contained coroutines to finish
+- blocks the thread!
+
+</div>
+</div>
+
+<!--
+  runBlocking starter en ny korutine, men ikke asynkront som launch og await.
+  den blokkerer tråden (ikke suspend) til alle korutiner er ferdige.
+  Den er en bro mellom "vanlig" kode og korutiner (suspend), 
+  Siden runBlocking skal kunne kalles fra normal kode kan den ikke suspende selv,
+  men må blokkere tråden den kjører i til corutinene er ferdig. Returnerer siste verdi fra lambdaen direkte (ikke wrappet i deferred som async)
 -->
 
 ---
