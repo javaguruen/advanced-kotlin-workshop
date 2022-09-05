@@ -22,12 +22,13 @@ style: |
 ```
 
 <!--
-  Korutiner stammer tilbake til 60 tallet, men ble først popularisert med
-  goroutines i Golang. 
-  Korutiner baserer seg på at en funksjon kan stoppes (suspend) for å så fortsette senere (resume)
-  Korutine api er på et høyere abstraksjonsnivå enn tråder. 
-  Korutiner er ikke et konsept på os nivå som tråder. Kotlin håndterer
-  bytting av hvilke korutiner som kjører og blir suspended, og kan gjenbruke minnet til en suspended korutine.
+Korutiner har sin opprinnelse helt tilbake til 60 tallet, men ble først popularisert med goroutines i Golang, og nå i Kotlin
+
+Det grunleggende prinsippet med Korutiner er at en funksjon kan stoppes (suspend) for å så fortsette senere (resume). 
+
+I motsetning til tråder, er ikke korutiner noe som styres av operativsystemet.
+Hvordan korutiner startes og stoppes og hvilke tråder de kjører på styres
+av korutine-biblioteket i Kotlin
 -->
 
 ---
@@ -41,18 +42,19 @@ style: |
 - Do tasks in parallel
 
 <!--
-  For en interaktiv applikasjon (mobil, js, gui) vil
-  ui bli uresponsivt om vi blokkerer tråden som oppdaterer ui. (Main tråd)
-  Langvarige operasjoner som nettverkskall og disk io blokkerer tråden
-  mens de venter på svar. Det er derfor ikke anbefalt å gjøre dette fra
-  Main tråden.
+Hvorfor trenger vi korutiner?
 
-  Kan løses med tråder, starte opp en ny tråd for å gjøre arbeidet.
-  men tråder er vanskelig å gjøre trygt. Kan føre til
-  minnelekasje. Tråder er "tunge" å switche mellom. Korutiner er lettvekts og 
-  raske å bytte mellom.
+Hvis vi har en interaktiv applikasjon, det være seg en mobil app, javascript på
+en nettside, eller en gui applikasjon, så er det typisk en tråd som brukes til å tegne opp og oppdatere det grafiske grensesnittet. Hvis vi trenger å hente 
+en nettverksressurs, eller gjøre intensive beregninger, så er det viktig å
+ikke gjøre det fra denne tråden. Gjør vi det vil gui fryse så lenge vi blokkerer denne tråden.
 
-  En annen løsning er callbacks, men I motsetning til kode med callbacks blir kode med korutiner nesten lik vanlig kode.
+Dette kan vi løse ved å fyre opp en ny tråd for å gjøre arbeidet. Men kode med
+flere tråder blir fort kompleks, og det er fort gjort å ende opp med deadlocks eller minne.
+Tråder er også relativt ressurskrevende, og det tar tid å bytte mellom dem.
+
+Korutiner er lettvekts og 
+raske å bytte mellom. bytting av hvilke korutiner som kjører og blir suspended, og kan gjenbruke minnet til en suspended korutine.
 -->
 
 ---
@@ -89,13 +91,15 @@ job.join()
 </div>
 
 <!--
-  Hvordan starter vi en korutine?
-  launch er en coroutine builder som lager en korutine, som startes umiddelbart 
-  Den er implementert som en extension funksjon på interface CoroutineScope. launch starter korutinen asynkront, den returnerer umiddelbart, og venter ikke på at korutinen skal bli ferdig,
-  men den returnerer en instans av Job som vi kan bruke til å vente på den. Job kan også brukes til å avbryte korutinen (cancell). Når vi venter på at den blir ferdig med join, blokkerer vi ikke tråden vi kjører på som med join på en thread, men suspender til korutinen er ferdig.
-  Om vi starter flere korutiner inni denne korutinen, vil den ikke fullføre før
-  de er ferdige.
-  [Forklar koden og hva output blir]
+Hvordan starter vi en korutine?
+launch er en coroutine builder som lager en korutine, som startes umiddelbart 
+
+launch starter korutinen asynkront, den returnerer umiddelbart, og venter ikke på at korutinen skal bli ferdig,
+
+men den returnerer en instans av Job som vi kan bruke til å vente på den. Job kan også brukes til å avbryte korutinen (cancell). Når vi venter på at den blir ferdig med join, blokkerer vi ikke tråden vi kjører på som med join på en thread, men suspender til korutinen er ferdig.
+Om vi starter flere korutiner inni denne korutinen, vil den ikke fullføre før
+de er ferdige.
+[Forklar koden og hva output blir]
 -->
 
 ---
@@ -173,6 +177,64 @@ alle korutinene.
 
 ---
 
+# Structured concurrency
+
+<div class="columns">
+<div>
+
+```kotlin
+    val parent = async {
+        var child = async {
+            delay(2000L)
+        }
+    }
+```
+
+</div>
+<div>
+
+- child coroutine inherits properties from parent
+- cancellation of parent propagates to children
+- errors in children propagate to parents
+- ensures proper cleanup of resources
+
+</div>
+</div>
+
+<!--
+  Med structured concurrency forsøker man å strukturere bruken av korutiner
+  på en måte oversiktlig og trygg måte. Nøsting av uttrykk for korutiner skaper ett 
+  hierarki som samsvarer med organiseringen av koden, og som sørger for at feil
+  propagerer oppover om de ikke håndteres.
+
+StructuredConcurency betyr at korutiner arver context egenskaper (som Dispatcher) fra korutinen den startes i (parent). 
+Om forelder korutinen blir cancelled, vil
+alle child korutiner også bli canceled. Dette gir en naturlig måte å organisere korutiner på. 
+-->
+
+---
+
+# CoroutineScope & CoroutineContext
+
+- Holds a `CoroutineContext`
+- Coroutine builders as extension functions 
+  - `launch`
+  - `async`
+- Coroutine builders inherit context from `CoroutineScope`
+- `coroutineScope { }` creates a new `CoroutineScope`
+  - used in suspending function gives access to calling scope
+  
+<!--
+En CoroutineScope har en CoroutineContext som har contexten som bestemmer hvordan korutinen kjører. 
+CoroutineContext inneholder bla.a 
+En dispatcher som avgjør hvordan tråder allokeres og er `Job` objekt som kan brukes til å sjekke om korutinen kjører, og til å cancellere den.
+Innebygde dispatchere `Dispatcher.Default|Main|IO|Unconfined`  Man kan også sett opp sin egen dispatcher.
+
+Context og dermed tråd kan endres underveis i en korutine med `withContext`
+-->
+
+---
+
 # Suspend Functions
 
 <div class="columns">
@@ -202,8 +264,7 @@ suspend fun doSomething(): String = coroutineScope {
   - (we can use `coroutineScope {}` for that)
 
 <!--
-suspend er et nøkkelord i kotlin. Det markerer at funksjonen kan suspende og resume.
-når den kompileres har den derfor et ekstra argument, som vi ikke ser i signaturen her
+suspend er et nøkkelord i kotlin. Det markerer at funksjonen kan suspende og resume. 
 
 Funksjoner som `runBlocking` og 
 `coroutineScope {}` kan benyttes i en suspend funksjon for å få tilgang til 
@@ -297,64 +358,6 @@ println("Hello, $s")
 
 ---
 
-# Structured concurrency
-
-<div class="columns">
-<div>
-
-```kotlin
-    val parent = async {
-        var child = async {
-            delay(2000L)
-        }
-    }
-```
-
-</div>
-<div>
-
-- child coroutine inherits properties from parent
-- cancellation of parent propagates to children
-- errors in children propagate to parents
-- ensures proper cleanup of resources
-
-</div>
-</div>
-
-<!--
-  Med structured concurrency forsøker man å strukturere bruken av korutiner
-  på en måte oversiktlig og trygg måte. Nøsting av uttrykk for korutiner skaper ett 
-  hierarki som samsvarer med organiseringen av koden, og som sørger for at feil
-  propagerer oppover om de ikke håndteres.
-
-StructuredConcurency betyr at korutiner arver context egenskaper (som Dispatcher) fra korutinen den startes i (parent). 
-Om forelder korutinen blir cancelled, vil
-alle child korutiner også bli canceled. Dette gir en naturlig måte å organisere korutiner på. 
--->
-
----
-
-# CoroutineScope
-
-- Holds a `CoroutineContext`
-- Coroutine builders as extension functions 
-  - `launch`
-  - `async`
-- Coroutine builders inherit context from `CoroutineScope`
-- `coroutineScope { }` creates a new `CoroutineScope`
-  - used in suspending function gives access to calling scope
-  
-<!--
-En CoroutineScope har en CoroutineContext som har contexten som bestemmer hvordan korutinen kjører. 
-CoroutineContext inneholder bla.a 
-En dispatcher som avgjør hvordan tråder allokeres og er `Job` objekt som kan brukes til å sjekke om korutinen kjører, og til å cancellere den.
-Innebygde dispatchere `Dispatcher.Default|Main|IO|Unconfined` (TODO: beskrivelse av hver dispatcher). Man kan også sett opp sin egen dispatcher.
-
-Context og dermed tråd kan endres underveis i en korutine med `withContext`
--->
-
----
-
 # coroutineScope  
 
 ```kotlin
@@ -365,24 +368,32 @@ suspend fun downloadResource(url: URL): Resource = coroutineScope {
 
 suspend fun downloadResource(url: URL): Resource = withContext(Dispatchers.IO) {
     // Using a blocking client
-    httpClient.get(url)
+    async { httpClient.get(url) }.await()
 }
 ```
+
+<!--
+
+Gir tilgang til coroutinescope funksjonen kalles fra, og dermed også context
+withContext gjør det samme, men lar deg tilpasse contexten. f,eks ved å endre Dispatcher
+
+-->
 
 ---
 
 # Combining contexts
 
 ```kotlin
-fun scopeTest() {
-    runTest {
         val c1 = currentCoroutineContext() + CoroutineName("c1") + Dispatchers.IO
+
         val c2 = c1 + Job() + CoroutineName("c2")
         
         assertEquals(c1[CoroutineDispatcher], c2[CoroutineDispatcher])
-    }
-}
 ```
+
+<!--
+
+-->
 
 ---
 
@@ -509,8 +520,8 @@ anbefalt å bruke try catch på innsiden av en korutine
 
 # Testing Coroutines
 
-- we can use runBlocking to call suspend functions from tests
-- runTest is similar but uses a special dispatcher for tests
+- we can use `runBlocking` to call suspend functions from tests
+- `runTest` is similar but uses a special dispatcher for tests
   - calls to delay will return immediately
   - keeps track of virtual time
 
