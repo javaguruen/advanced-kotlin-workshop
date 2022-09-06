@@ -184,9 +184,11 @@ alle korutinene.
 
 ```kotlin
     val parent = async {
+  
         var child = async {
             delay(2000L)
         }
+  
     }
 ```
 
@@ -216,11 +218,12 @@ alle child korutiner også bli canceled. Dette gir en naturlig måte å organise
 
 # CoroutineScope & CoroutineContext
 
-- Holds a `CoroutineContext`
-- Coroutine builders as extension functions 
+- `CoroutineScope` Holds a `CoroutineContext`
+- Coroutine builders as extensions on `CoroutineScope`
   - `launch`
   - `async`
 - Coroutine builders inherit context from `CoroutineScope`
+- `CoroutineContext` is a set of properties
 - `coroutineScope { }` creates a new `CoroutineScope`
   - used in suspending function gives access to calling scope
   
